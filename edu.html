@@ -176,7 +176,7 @@ async function startAnalyze() {
     const upResp = await fetch(API + '/api/edu/upload', { method: 'POST', body: fd });
     const upData = await upResp.json();
     if (!upData.success) throw new Error(upData.error || '上传失败');
-    setStep(2); document.getElementById('loadingText').textContent = 'AI 正在识别...（约 30-60 秒）';
+    setStep(2); document.getElementById('loadingText').textContent = `AI 正在识别第 1/${upData.files.length} 张图片...（每张约 30 秒）`;
     const aResp = await fetch(API + '/api/edu/analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ images: upData.files }) });
     const aData = await aResp.json();
     if (aData.error) throw new Error(aData.error);
