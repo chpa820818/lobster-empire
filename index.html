@@ -58,6 +58,15 @@ nav.scrolled{box-shadow:0 4px 30px rgba(0,0,0,.4)}
 .nav-links a.active{color:var(--gold);background:var(--gold-glow)}
 .nav-hamburger{display:none;background:none;border:none;color:var(--text);font-size:24px;cursor:pointer}
 
+/* ===== Department Quick Bar ===== */
+.dept-bar{position:fixed;top:60px;left:0;right:0;z-index:999;background:rgba(14,14,26,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);transform:translateY(-100%);opacity:0;transition:all .35s ease;pointer-events:none}
+.dept-bar.show{transform:translateY(0);opacity:1;pointer-events:auto}
+.dept-bar-inner{max-width:1200px;margin:0 auto;padding:10px 24px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.dept-link{display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:10px;font-size:13px;font-weight:500;color:var(--text-dim);background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);transition:all .25s;cursor:pointer;text-decoration:none;white-space:nowrap}
+.dept-link:hover{color:var(--gold);border-color:rgba(212,168,67,.3);background:rgba(212,168,67,.15);transform:translateY(-1px)}
+.dept-link .dl-icon{font-size:16px}
+.dept-link .dl-name{font-size:12.5px}
+
 /* ===== Hero ===== */
 .hero{
   min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
@@ -228,6 +237,9 @@ footer .footer-links a:hover{color:var(--gold)}
   }
   .nav-links.open{display:flex}
   .nav-hamburger{display:block}
+  .dept-bar-inner{padding:8px 12px;gap:6px}
+  .dept-link{padding:6px 10px;font-size:12px}
+  .dept-link .dl-name{font-size:11.5px}
   .hero{min-height:90vh;padding:80px 20px 40px}
   .hero-emblem{width:120px;height:120px}
   .hero-lobster{font-size:72px}
@@ -258,6 +270,18 @@ footer .footer-links a:hover{color:var(--gold)}
     </div>
   </div>
 </nav>
+
+<!-- Department Quick Bar -->
+<div class="dept-bar" id="deptBar">
+  <div class="dept-bar-inner">
+    <a href="#dept-edu" class="dept-link"><span class="dl-icon">📚</span><span class="dl-name">教育培训部</span></a>
+    <a href="#dept-sec" class="dept-link"><span class="dl-icon">🛡️</span><span class="dl-name">安全部</span></a>
+    <a href="#dept-data" class="dept-link"><span class="dl-icon">📊</span><span class="dl-name">数据统计司</span></a>
+    <a href="#dept-prop" class="dept-link"><span class="dl-icon">🎨</span><span class="dl-name">宣传部</span></a>
+    <a href="#dept-eng" class="dept-link"><span class="dl-icon">⚙️</span><span class="dl-name">技术工程部</span></a>
+    <a href="#dept-law" class="dept-link"><span class="dl-icon">📜</span><span class="dl-name">法务部</span></a>
+  </div>
+</div>
 
 <!-- Hero -->
 <section class="hero" id="home">
@@ -299,7 +323,7 @@ footer .footer-links a:hover{color:var(--gold)}
   </div>
 
   <div class="dept-grid">
-    <div class="dept-card fade-in">
+    <div class="dept-card fade-in" id="dept-edu">
       <div class="dept-header">
         <div class="dept-icon">📚</div>
         <div>
@@ -315,7 +339,7 @@ footer .footer-links a:hover{color:var(--gold)}
       </div>
     </div>
 
-    <div class="dept-card fade-in">
+    <div class="dept-card fade-in" id="dept-sec">
       <div class="dept-header">
         <div class="dept-icon">🛡️</div>
         <div>
@@ -332,7 +356,7 @@ footer .footer-links a:hover{color:var(--gold)}
       </div>
     </div>
 
-    <div class="dept-card fade-in">
+    <div class="dept-card fade-in" id="dept-data">
       <div class="dept-header">
         <div class="dept-icon">📊</div>
         <div>
@@ -347,7 +371,7 @@ footer .footer-links a:hover{color:var(--gold)}
       </div>
     </div>
 
-    <div class="dept-card fade-in">
+    <div class="dept-card fade-in" id="dept-prop">
       <div class="dept-header">
         <div class="dept-icon">🎨</div>
         <div>
@@ -362,7 +386,7 @@ footer .footer-links a:hover{color:var(--gold)}
       </div>
     </div>
 
-    <div class="dept-card fade-in">
+    <div class="dept-card fade-in" id="dept-eng">
       <div class="dept-header">
         <div class="dept-icon">⚙️</div>
         <div>
@@ -378,7 +402,7 @@ footer .footer-links a:hover{color:var(--gold)}
       </div>
     </div>
 
-    <div class="dept-card fade-in">
+    <div class="dept-card fade-in" id="dept-law">
       <div class="dept-header">
         <div class="dept-icon">📜</div>
         <div>
@@ -514,9 +538,14 @@ footer .footer-links a:hover{color:var(--gold)}
 // ===== Navigation =====
 const navbar = document.getElementById('navbar');
 const navLinks = document.querySelectorAll('.nav-links a');
+const deptBar = document.getElementById('deptBar');
 
 window.addEventListener('scroll', () => {
   navbar.classList.toggle('scrolled', window.scrollY > 20);
+  // Show dept bar after scrolling past hero
+  const hero = document.getElementById('home');
+  const heroBottom = hero.offsetTop + hero.offsetHeight;
+  deptBar.classList.toggle('show', window.scrollY > heroBottom - 200);
   // Active section detection
   const sections = document.querySelectorAll('section[id]');
   let current = '';
@@ -525,6 +554,18 @@ window.addEventListener('scroll', () => {
   });
   navLinks.forEach(a => {
     a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+  });
+});
+
+// Smooth scroll for dept links with offset for fixed bars
+document.querySelectorAll('.dept-link').forEach(link => {
+  link.addEventListener('click', e => {
+    e.preventDefault();
+    const target = document.querySelector(link.getAttribute('href'));
+    if (target) {
+      const offset = 130; // nav + dept bar height
+      window.scrollTo({ top: target.offsetTop - offset, behavior: 'smooth' });
+    }
   });
 });
 
