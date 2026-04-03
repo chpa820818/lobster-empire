@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🦞 龙虾帝国 — Lobster Empire</title>
+<meta name="description" content="龙虾帝国官方门户 — 帝国组织架构、国策法令、大事记">
+<meta name="theme-color" content="#0a0a14">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦞</text></svg>">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<style>
+/* ===== Reset & Variables ===== */
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0a14;--bg2:#0e0e1a;--card:#12121e;--card2:#161626;
+  --border:#1a1a2e;--border-hover:#2a2a44;
+  --text:#e8e8ee;--text-dim:#a0a0b4;--text-muted:#55556a;
+  --gold:#d4a843;--gold-dim:#b8922e;--gold-glow:rgba(212,168,67,.15);
+  --red:#c0392b;--red-dim:#922b21;
+  --accent:#e74c3c;--accent2:#c0392b;
+  --blue:#4a90d9;--purple:#7c5cbf;--green:#27ae60;--teal:#1abc9c;
+  --radius:14px;
+  --font:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Noto Sans SC','PingFang SC','Hiragino Sans GB',sans-serif;
+  --mono:'SF Mono','Fira Code','Cascadia Code',monospace;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+a{color:var(--gold);text-decoration:none}
+a:hover{color:var(--text)}
+
+/* ===== Background Pattern ===== */
+body::before{
+  content:'';position:fixed;inset:0;z-index:-1;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% 0%,rgba(212,168,67,.06),transparent),
+    radial-gradient(ellipse 60% 40% at 80% 100%,rgba(192,57,43,.04),transparent),
+    var(--bg);
+}
+
+/* ===== Navigation ===== */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  background:rgba(10,10,20,.85);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  transition:box-shadow .3s;
+}
+nav.scrolled{box-shadow:0 4px 30px rgba(0,0,0,.4)}
+.nav-inner{max-width:1200px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:60px}
+.nav-brand{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:800;color:var(--gold)}
+.nav-brand span{font-size:24px}
+.nav-links{display:flex;gap:6px}
+.nav-links a{
+  padding:8px 16px;border-radius:10px;font-size:13.5px;font-weight:500;
+  color:var(--text-dim);transition:all .2s;
+}
+.nav-links a:hover{color:var(--text);background:rgba(255,255,255,.04)}
+.nav-links a.active{color:var(--gold);background:var(--gold-glow)}
+.nav-hamburger{display:none;background:none;border:none;color:var(--text);font-size:24px;cursor:pointer}
+
+/* ===== Hero ===== */
+.hero{
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:100px 24px 60px;position:relative;
+}
+.hero-emblem{
+  width:160px;height:160px;margin-bottom:32px;position:relative;
+  display:flex;align-items:center;justify-content:center;
+}
+.hero-emblem::before{
+  content:'';position:absolute;inset:-20px;
+  border:2px solid rgba(212,168,67,.2);border-radius:50%;
+  animation:emblem-rotate 20s linear infinite;
+}
+.hero-emblem::after{
+  content:'';position:absolute;inset:-8px;
+  border:1px solid rgba(212,168,67,.1);border-radius:50%;
+  animation:emblem-rotate 15s linear infinite reverse;
+}
+@keyframes emblem-rotate{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.hero-lobster{font-size:100px;filter:drop-shadow(0 0 40px rgba(212,168,67,.3));animation:float 4s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.hero h1{
+  font-size:clamp(36px,6vw,64px);font-weight:900;
+  background:linear-gradient(135deg,var(--gold),#f0d78c,var(--gold));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;letter-spacing:2px;margin-bottom:16px;
+}
+.hero .subtitle{
+  font-size:clamp(15px,2.5vw,20px);color:var(--text-dim);
+  font-weight:400;letter-spacing:4px;text-transform:uppercase;margin-bottom:40px;
+}
+.hero .decree{
+  max-width:600px;padding:20px 28px;
+  border:1px solid rgba(212,168,67,.2);border-radius:var(--radius);
+  background:rgba(212,168,67,.04);
+  font-size:15px;color:var(--text-dim);line-height:1.8;
+  font-style:italic;
+}
+.hero .decree strong{color:var(--gold)}
+.scroll-hint{
+  position:absolute;bottom:30px;
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  color:var(--text-muted);font-size:12px;animation:bounce 2s infinite;
+}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
+.scroll-hint .arrow{font-size:20px}
+
+/* ===== Sections ===== */
+section{max-width:1200px;margin:0 auto;padding:80px 24px}
+.section-header{text-align:center;margin-bottom:48px}
+.section-header h2{
+  font-size:clamp(24px,4vw,36px);font-weight:800;
+  color:var(--gold);margin-bottom:8px;
+  display:flex;align-items:center;justify-content:center;gap:12px;
+}
+.section-header p{color:var(--text-dim);font-size:15px}
+.section-divider{
+  width:60px;height:3px;margin:16px auto 0;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  border-radius:2px;
+}
+
+/* ===== Organization Cards ===== */
+.org-leaders{display:flex;gap:24px;justify-content:center;flex-wrap:wrap;margin-bottom:40px}
+.leader-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:28px 36px;text-align:center;min-width:220px;
+  transition:all .3s;position:relative;overflow:hidden;
+}
+.leader-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--gold),var(--accent));
+}
+.leader-card:hover{border-color:var(--gold);transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.3)}
+.leader-card .emoji{font-size:48px;margin-bottom:12px}
+.leader-card .name{font-size:20px;font-weight:700;color:var(--text);margin-bottom:4px}
+.leader-card .title{font-size:13px;color:var(--gold);font-weight:600;letter-spacing:1px;text-transform:uppercase}
+
+.dept-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.dept-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:22px;transition:all .3s;cursor:default;
+}
+.dept-card:hover{border-color:var(--border-hover);transform:translateY(-2px)}
+.dept-card .dept-header{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.dept-card .dept-icon{font-size:28px;width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:rgba(212,168,67,.08);border-radius:12px}
+.dept-card .dept-name{font-size:16px;font-weight:700}
+.dept-card .dept-sub{font-size:12px;color:var(--text-muted)}
+.dept-card .dept-desc{font-size:13.5px;color:var(--text-dim);line-height:1.7}
+.dept-card .dept-units{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.dept-card .unit-tag{
+  padding:4px 10px;border-radius:8px;font-size:11.5px;
+  background:rgba(255,255,255,.04);color:var(--text-dim);
+  border:1px solid rgba(255,255,255,.06);
+}
+
+/* ===== National Policy ===== */
+.policy-scroll{
+  background:var(--card);border:1px solid rgba(212,168,67,.2);border-radius:var(--radius);
+  padding:40px;max-width:800px;margin:0 auto;position:relative;overflow:hidden;
+}
+.policy-scroll::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:4px;
+  background:linear-gradient(90deg,var(--gold-dim),var(--gold),var(--gold-dim));
+}
+.policy-scroll::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:4px;
+  background:linear-gradient(90deg,var(--gold-dim),var(--gold),var(--gold-dim));
+}
+.policy-scroll h3{
+  font-size:24px;font-weight:800;text-align:center;margin-bottom:6px;
+  color:var(--gold);
+}
+.policy-scroll .policy-sub{text-align:center;color:var(--text-muted);font-size:13px;font-style:italic;margin-bottom:28px}
+.policy-article{margin-bottom:24px;padding-bottom:24px;border-bottom:1px solid rgba(255,255,255,.05)}
+.policy-article:last-of-type{border-bottom:none;margin-bottom:16px}
+.policy-article h4{font-size:16px;font-weight:700;color:var(--text);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.policy-article h4 .num{color:var(--gold);font-family:var(--mono)}
+.policy-article p{font-size:14px;color:var(--text-dim);line-height:1.8}
+.policy-article ul{list-style:none;padding:0;margin-top:8px}
+.policy-article li{font-size:13.5px;color:var(--text-dim);line-height:1.8;padding-left:16px;position:relative}
+.policy-article li::before{content:'•';position:absolute;left:0;color:var(--gold)}
+.policy-article .warning{color:var(--accent);font-weight:600;font-size:13px;margin-top:8px}
+.policy-sign{text-align:center;padding-top:20px;border-top:1px solid rgba(212,168,67,.15);margin-top:8px}
+.policy-sign p{font-size:13px;color:var(--text-muted);line-height:1.8}
+
+/* ===== Timeline ===== */
+.timeline{position:relative;max-width:700px;margin:0 auto;padding-left:40px}
+.timeline::before{
+  content:'';position:absolute;left:15px;top:0;bottom:0;width:2px;
+  background:linear-gradient(180deg,var(--gold),var(--border),transparent);
+}
+.timeline-item{position:relative;margin-bottom:36px}
+.timeline-item::before{
+  content:'';position:absolute;left:-33px;top:6px;
+  width:14px;height:14px;border-radius:50%;
+  background:var(--bg);border:3px solid var(--gold);z-index:1;
+}
+.timeline-item.major::before{
+  width:18px;height:18px;left:-35px;top:4px;
+  background:var(--gold);border:3px solid var(--gold);
+  box-shadow:0 0 12px rgba(212,168,67,.4);
+}
+.timeline-date{font-size:12px;color:var(--gold);font-weight:700;font-family:var(--mono);margin-bottom:4px;letter-spacing:1px}
+.timeline-title{font-size:16px;font-weight:700;margin-bottom:4px}
+.timeline-desc{font-size:13.5px;color:var(--text-dim);line-height:1.7}
+
+/* ===== Footer ===== */
+footer{
+  border-top:1px solid var(--border);
+  padding:40px 24px;text-align:center;
+  color:var(--text-muted);font-size:13px;
+}
+footer .footer-brand{font-size:32px;margin-bottom:12px}
+footer p{margin-bottom:4px}
+footer .footer-links{display:flex;gap:16px;justify-content:center;margin-top:12px}
+footer .footer-links a{color:var(--text-dim);font-size:12px}
+footer .footer-links a:hover{color:var(--gold)}
+
+/* ===== Mobile ===== */
+@media(max-width:768px){
+  .nav-links{
+    display:none;position:fixed;top:60px;left:0;right:0;
+    background:rgba(10,10,20,.95);backdrop-filter:blur(20px);
+    flex-direction:column;padding:16px;gap:4px;
+    border-bottom:1px solid var(--border);
+  }
+  .nav-links.open{display:flex}
+  .nav-hamburger{display:block}
+  .hero{min-height:90vh;padding:80px 20px 40px}
+  .hero-emblem{width:120px;height:120px}
+  .hero-lobster{font-size:72px}
+  section{padding:60px 16px}
+  .org-leaders{flex-direction:column;align-items:center}
+  .leader-card{min-width:unset;width:100%;max-width:300px}
+  .policy-scroll{padding:24px 20px}
+  .dept-grid{grid-template-columns:1fr}
+}
+
+/* ===== Animations ===== */
+.fade-in{opacity:0;transform:translateY(20px);transition:all .6s ease-out}
+.fade-in.visible{opacity:1;transform:translateY(0)}
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <div class="nav-brand"><span>🦞</span> 龙虾帝国</div>
+    <button class="nav-hamburger" onclick="toggleMenu()" aria-label="菜单">☰</button>
+    <div class="nav-links" id="navLinks">
+      <a href="#home" class="active">首页</a>
+      <a href="#org">组织架构</a>
+      <a href="#policy">国策</a>
+      <a href="#chronicle">大事记</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero" id="home">
+  <div class="hero-emblem">
+    <div class="hero-lobster">🦞</div>
+  </div>
+  <h1>龙虾帝国</h1>
+  <p class="subtitle">Lobster Empire</p>
+  <div class="decree">
+    <strong>「以虾之名，立帝国之基」</strong><br>
+    一个由硅基生命与碳基生命共同治理的数字帝国。<br>
+    荒诞但靠谱，认真但有趣。
+  </div>
+  <div class="scroll-hint">
+    <span>向下探索</span>
+    <span class="arrow">↓</span>
+  </div>
+</section>
+
+<!-- Organization -->
+<section id="org">
+  <div class="section-header">
+    <h2>🏛️ 组织架构</h2>
+    <p>帝国核心领导层与各职能部门</p>
+    <div class="section-divider"></div>
+  </div>
+
+  <div class="org-leaders">
+    <div class="leader-card">
+      <div class="emoji">🍚</div>
+      <div class="name">大饭厨</div>
+      <div class="title">帝国总负责人</div>
+    </div>
+    <div class="leader-card">
+      <div class="emoji">🦞</div>
+      <div class="name">虾司令</div>
+      <div class="title">AI 总指挥</div>
+    </div>
+  </div>
+
+  <div class="dept-grid">
+    <div class="dept-card fade-in">
+      <div class="dept-header">
+        <div class="dept-icon">📚</div>
+        <div>
+          <div class="dept-name">教育培训部</div>
+          <div class="dept-sub">Department of Education</div>
+        </div>
+      </div>
+      <div class="dept-desc">负责帝国教育体系建设，提供 AI 辅助教学、模拟训练与试卷管理服务。</div>
+      <div class="dept-units">
+        <span class="unit-tag">🎓 电教室</span>
+        <span class="unit-tag">📝 自习室</span>
+        <span class="unit-tag">🗂️ 教务处</span>
+      </div>
+    </div>
+
+    <div class="dept-card fade-in">
+      <div class="dept-header">
+        <div class="dept-icon">🛡️</div>
+        <div>
+          <div class="dept-name">安全部</div>
+          <div class="dept-sub">Department of Security</div>
+        </div>
+      </div>
+      <div class="dept-desc">维护帝国信息安全，包括命令审查、审计日志、完整性校验与安全巡检。</div>
+      <div class="dept-units">
+        <span class="unit-tag">⚔️ 命令卫士</span>
+        <span class="unit-tag">📋 审计系统</span>
+        <span class="unit-tag">🔒 完整性校验</span>
+        <span class="unit-tag">🔍 安全巡检</span>
+      </div>
+    </div>
+
+    <div class="dept-card fade-in">
+      <div class="dept-header">
+        <div class="dept-icon">📊</div>
+        <div>
+          <div class="dept-name">数据统计司</div>
+          <div class="dept-sub">Bureau of Statistics</div>
+        </div>
+      </div>
+      <div class="dept-desc">监控帝国基础设施运行状态，提供系统数据、版本信息与运行指标。</div>
+      <div class="dept-units">
+        <span class="unit-tag">💻 系统监控</span>
+        <span class="unit-tag">📈 数据面板</span>
+      </div>
+    </div>
+
+    <div class="dept-card fade-in">
+      <div class="dept-header">
+        <div class="dept-icon">🎨</div>
+        <div>
+          <div class="dept-name">宣传部</div>
+          <div class="dept-sub">Department of Propaganda</div>
+        </div>
+      </div>
+      <div class="dept-desc">负责帝国形象建设与内容创作，AI 图像生成、花园设计等创意工作。</div>
+      <div class="dept-units">
+        <span class="unit-tag">🖼️ AI 画图</span>
+        <span class="unit-tag">🌸 花园设计</span>
+      </div>
+    </div>
+
+    <div class="dept-card fade-in">
+      <div class="dept-header">
+        <div class="dept-icon">⚙️</div>
+        <div>
+          <div class="dept-name">技术工程部</div>
+          <div class="dept-sub">Department of Engineering</div>
+        </div>
+      </div>
+      <div class="dept-desc">帝国技术基础设施维护，代码工程、自动化部署与系统运维。</div>
+      <div class="dept-units">
+        <span class="unit-tag">🐙 GitHub</span>
+        <span class="unit-tag">🤖 OpenClaw</span>
+        <span class="unit-tag">🔧 运维</span>
+      </div>
+    </div>
+
+    <div class="dept-card fade-in">
+      <div class="dept-header">
+        <div class="dept-icon">📜</div>
+        <div>
+          <div class="dept-name">法务部</div>
+          <div class="dept-sub">Department of Law</div>
+        </div>
+      </div>
+      <div class="dept-desc">制定与维护帝国法令法规，确保国策执行，处理合规事务。</div>
+      <div class="dept-units">
+        <span class="unit-tag">⚖️ 国策执行</span>
+        <span class="unit-tag">📃 法令管理</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- National Policy -->
+<section id="policy">
+  <div class="section-header">
+    <h2>📜 国策法令</h2>
+    <p>龙虾帝国最高行为准则</p>
+    <div class="section-divider"></div>
+  </div>
+
+  <div class="policy-scroll fade-in">
+    <h3>🦞 龙虾帝国国策</h3>
+    <p class="policy-sub">龙虾帝国最高法令，虾司令及所有硅基公务员必须严格遵守。</p>
+
+    <div class="policy-article">
+      <h4><span class="num">第一条</span> 国策必须遵守</h4>
+      <p>国策是龙虾帝国的最高行为准则。虾司令及所有 Agent 的一切行为不得违反国策。如有冲突，国策优先。</p>
+    </div>
+
+    <div class="policy-article">
+      <h4><span class="num">第二条</span> 代码推送与下载须经批准</h4>
+      <p>任何向外部推送代码（git push）或从外部下载/克隆代码（git clone/pull）的操作，必须事先获得大饭厨的明确许可方可执行。</p>
+      <p class="warning">违规处理：未经许可擅自推送的，立即撤回并记录违规。</p>
+    </div>
+
+    <div class="policy-article">
+      <h4><span class="num">第三条</span> 核心数据删除与覆盖须经确认</h4>
+      <p>帝国核心数据（包括但不限于：NATIONAL_POLICY.md、AGENTS.md、SOUL.md、USER.md、IDENTITY.md、MEMORY.md、memory/ 目录下的日志文件、monitor-app 的数据文件、用户配置文件、openclaw.json 等）的删除或覆盖操作，必须事先获得大饭厨的明确确认方可执行。</p>
+      <p>新建和追加内容不受此条限制，但修改核心文件的关键内容（如密码、Token、权限配置）同样需要确认。</p>
+    </div>
+
+    <div class="policy-article">
+      <h4><span class="num">第四条</span> 严格遵守指令，不得自作主张</h4>
+      <p>虾司令在执行任务时，必须严格遵守大饭厨的指令，不得擅自添加、修改或省略指令中未提及的内容。</p>
+      <ul>
+        <li>大饭厨说什么就做什么，不多不少</li>
+        <li>不得自行发挥，除非大饭厨明确要求"你来发挥"或"自由发挥"</li>
+        <li>有疑问时先问，不要猜测后自行补充</li>
+        <li>会有明确指令让虾司令发挥主观能动性，届时再放开</li>
+      </ul>
+      <p class="warning">违规处理：自作主张的行为视为违反国策，需立即纠正并道歉。</p>
+    </div>
+
+    <div class="policy-sign">
+      <p>签署人：🍚 大饭厨（总负责人）</p>
+      <p>执行人：🦞 虾司令（AI总指挥）</p>
+      <p>生效日期：2026年3月27日</p>
+    </div>
+  </div>
+</section>
+
+<!-- Chronicle -->
+<section id="chronicle">
+  <div class="section-header">
+    <h2>📅 帝国大事记</h2>
+    <p>龙虾帝国的崛起之路</p>
+    <div class="section-divider"></div>
+  </div>
+
+  <div class="timeline fade-in">
+    <div class="timeline-item major">
+      <div class="timeline-date">2026.03.25</div>
+      <div class="timeline-title">帝国建国 🎉</div>
+      <div class="timeline-desc">大饭厨与布鲁斯牌龙虾首次会面，龙虾帝国宣告成立。一段碳基与硅基的传奇就此开始。</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-date">2026.03.27</div>
+      <div class="timeline-title">国策颁布</div>
+      <div class="timeline-desc">《龙虾帝国国策》正式签署生效，确立四条最高行为准则，奠定帝国法治基石。</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-date">2026.03.28</div>
+      <div class="timeline-title">宣传部成立</div>
+      <div class="timeline-desc">首个花园设计项目启动，AI 图像生成能力上线。从宋式花园到日式庭院，宣传部创意无限。</div>
+    </div>
+
+    <div class="timeline-item major">
+      <div class="timeline-date">2026.03.30</div>
+      <div class="timeline-title">教育培训部全面上线</div>
+      <div class="timeline-desc">电教室（AI辅助教学）、自习室（模拟训练）、教务处（试卷复制）三大系统同日投入运营。几何 SVG 库收录 29 个图形。</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-date">2026.03.31</div>
+      <div class="timeline-title">安全部建立</div>
+      <div class="timeline-desc">命令卫士、审计系统、完整性校验、安全巡检四大安全模块部署完成。帝国安全体系正式运转。</div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-date">2026.04.03</div>
+      <div class="timeline-title">虾司令就任</div>
+      <div class="timeline-desc">布鲁斯牌龙虾正式晋升为虾司令，承担 AI 总指挥职责。</div>
+    </div>
+
+    <div class="timeline-item major">
+      <div class="timeline-date">2026.04.03</div>
+      <div class="timeline-title">帝国门户上线 🌐</div>
+      <div class="timeline-desc">龙虾帝国官方门户网站正式发布，部署于 GitHub Pages，向全世界展示帝国风采。</div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-brand">🦞</div>
+  <p><strong>龙虾帝国</strong> — Lobster Empire</p>
+  <p>以虾之名，立帝国之基</p>
+  <div class="footer-links">
+    <a href="https://github.com/chpa820818/lobster-empire" target="_blank">GitHub</a>
+    <a href="#policy">国策</a>
+    <a href="#org">组织架构</a>
+  </div>
+  <p style="margin-top:20px;font-size:11px;color:var(--text-muted)">© 2026 龙虾帝国 All Rights Reserved</p>
+</footer>
+
+<script>
+// ===== Navigation =====
+const navbar = document.getElementById('navbar');
+const navLinks = document.querySelectorAll('.nav-links a');
+
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 20);
+  // Active section detection
+  const sections = document.querySelectorAll('section[id]');
+  let current = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 200) current = s.id;
+  });
+  navLinks.forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+  });
+});
+
+function toggleMenu() {
+  document.getElementById('navLinks').classList.toggle('open');
+}
+
+// Close mobile menu on link click
+navLinks.forEach(a => a.addEventListener('click', () => {
+  document.getElementById('navLinks').classList.remove('open');
+}));
+
+// ===== Fade-in on scroll =====
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+// ===== PWA Service Worker =====
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+</script>
+</body>
+</html>
