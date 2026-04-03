@@ -189,14 +189,41 @@ async function startAnalyze() {
 }
 function setStep(n) { for (let i=1;i<=3;i++) document.getElementById('step'+i).className='step'+(i<n?' done':i===n?' active':''); }
 function renderDoc(text) {
-  return text
+  // Extract and protect SVG blocks
+  const svgs = [];
+  text = text.replace(/\[SVG_START\]\s*([\s\S]*?)\s*\[SVG_END\]/g, (_, svg) => {
+    const idx = svgs.length;
+    // Clean up SVG and ensure it renders well
+    let cleanSvg = svg.trim();
+    // Add white background if not present
+    if (!cleanSvg.includes('style=')) {
+      cleanSvg = cleanSvg.replace(/<svg/, '<svg style="background:#fff;border-radius:8px"');
+    }
+    svgs.push('<div style="margin:12px 0;padding:16px;background:#fff;border:1px solid var(--border);border-radius:10px;text-align:center;overflow-x:auto"><div style="display:inline-block;min-width:200px">' + cleanSvg + '</div><div style="font-size:11px;color:#666;margin-top:8px">📐 几何图形</div></div>');
+    return '___SVG_' + idx + '___';
+  });
+
+  // Also handle raw SVG tags (in case AI outputs without markers)
+  text = text.replace(/<svg[\s\S]*?<\/svg>/gi, (svg) => {
+    const idx = svgs.length;
+    let cleanSvg = svg.trim();
+    if (!cleanSvg.includes('style=')) {
+      cleanSvg = cleanSvg.replace(/<svg/, '<svg style="background:#fff;border-radius:8px"');
+    }
+    svgs.push('<div style="margin:12px 0;padding:16px;background:#fff;border:1px solid var(--border);border-radius:10px;text-align:center;overflow-x:auto"><div style="display:inline-block;min-width:200px">' + cleanSvg + '</div><div style="font-size:11px;color:#666;margin-top:8px">📐 几何图形</div></div>');
+    return '___SVG_' + idx + '___';
+  });
+
+  let html = text
     .replace(/^### (.+)$/gm,'<h3>$1</h3>')
     .replace(/^## (.+)$/gm,'<h2>$1</h2>')
     .replace(/^# (.+)$/gm,'<h1>$1</h1>')
     .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
     .replace(/\[GEO:\s*(.+?)\]/g,'<div class="geo-desc">$1</div>')
+    .replace(/\[图片描述:\s*(.+?)\]/g,'<div class="geo-desc" style="border-color:rgba(212,168,67,.2);color:var(--gold)">🖼️ $1</div>')
     .replace(/\$\$(.+?)\$\$/gs,'<div class="formula">$1</div>')
     .replace(/\$(.+?)\$/g,'<code>$1</code>')
+    .replace(/```(\w*)\n([\s\S]*?)```/g, '<pre style="background:rgba(255,255,255,.04);padding:12px;border-radius:8px;overflow-x:auto;font-size:13px"><code>$2</code></pre>')
     .replace(/(\|.+\|\n\|[-| :]+\|\n(?:\|.+\|\n?)+)/g, m => {
       const lines=m.trim().split('\n').filter(l=>l.trim());
       if(lines.length<3)return m;
@@ -205,6 +232,11 @@ function renderDoc(text) {
       return '<table><thead><tr>'+h.map(c=>'<th>'+c+'</th>').join('')+'</tr></thead><tbody>'+r.map(cs=>'<tr>'+cs.map(c=>'<td>'+c+'</td>').join('')+'</tr>').join('')+'</tbody></table>';
     })
     .replace(/\n/g,'<br>');
+
+  // Restore SVGs
+  svgs.forEach((svg, i) => { html = html.replace('___SVG_' + i + '___', svg); });
+
+  return html;
 }
 function copyText() { navigator.clipboard.writeText(rawResult).then(()=>alert('已复制')); }
 function downloadDoc() {
