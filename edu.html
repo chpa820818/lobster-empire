@@ -248,34 +248,32 @@ async function startAnalyze() {
 function setStep(n) { for(let i=1;i<=3;i++) document.getElementById('step'+i).className='step'+(i<n?' done':i===n?' active':''); }
 
 function renderDoc(text) {
-  // Track which page we're on (for multi-image)
   let currentPage = 0;
-  
-  // Handle SVG blocks
-  const svgs = [];
-  text = text.replace(/<svg[\s\S]*?<\/svg>/gi, svg => { const i=svgs.length; svgs.push('<div style="margin:12px 0;padding:16px;background:#fff;border:1px solid var(--border);border-radius:10px;text-align:center;overflow-x:auto"><div style="display:inline-block">'+svg+'</div></div>'); return '___SVG_'+i+'___'; });
 
   let html = text
     .replace(/```[\s\S]*?```/g, m => '<pre style="background:rgba(255,255,255,.04);padding:12px;border-radius:8px;font-size:13px;overflow-x:auto;white-space:pre-wrap">'+m.replace(/```\w*\n?/g,'').replace(/```/g,'')+'</pre>')
     .replace(/^### (.+)$/gm,'<h3>$1</h3>')
     .replace(/^## (.+)$/gm, (m, title) => {
-      // Track page changes for multi-image
       const pageMatch = title.match(/第(\d+)页/);
       if (pageMatch) currentPage = parseInt(pageMatch[1]) - 1;
       return '<h2>' + title + '</h2>';
     })
     .replace(/^# (.+)$/gm,'<h1>$1</h1>')
     .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
-    // CROP tags -> inline cropped images
-    .replace(/\[CROP:\s*(\d+)%?,\s*(\d+)%?,\s*(\d+)%?,\s*(\d+)%?,\s*(.+?)\]/g, (match, x, y, w, h, desc) => {
-      // Determine which image file to crop from
+    // [附图] -> show original image
+    .replace(/\[附图\]/g, () => {
       const imgIdx = Math.min(currentPage, serverImageFiles.length - 1);
-      if (imgIdx < 0 || !serverImageFiles[imgIdx]) return '<div class="img-note">📐 ' + desc + '</div>';
-      const fname = serverImageFiles[imgIdx].filename;
-      const cropUrl = API + '/api/edu/crop/' + fname + '?x=' + x + '&y=' + y + '&w=' + w + '&h=' + h;
-      return '<div style="margin:10px 0;text-align:center"><img src="' + cropUrl + '" style="max-width:320px;max-height:280px;border-radius:8px;border:1px solid var(--border);cursor:pointer" onclick="openLb([\'' + cropUrl + '\'],0)" alt="' + desc + '"><div style="font-size:11px;color:var(--text-muted);margin-top:4px">📐 ' + desc + '</div></div>';
+      if (imgIdx < 0 || !serverImageFiles[imgIdx]) return '<span style="color:var(--blue)">[附图]</span>';
+      const imgUrl = API + '/edu-uploads/rot_' + serverImageFiles[imgIdx].filename;
+      return '<div style="margin:10px 0;display:inline-block;vertical-align:top"><img src="' + imgUrl + '" style="max-width:240px;max-height:200px;border-radius:8px;border:1px solid var(--border);cursor:pointer;vertical-align:middle" onclick="openLb([\'' + imgUrl + '\'],0)"><div style="font-size:10px;color:var(--text-muted);text-align:center">点击放大</div></div>';
     })
-    // Fallback for [此处有图:...] 
+    // Fallback patterns
+    .replace(/\[CROP:[^\]]+\]/g, () => {
+      const imgIdx = Math.min(currentPage, serverImageFiles.length - 1);
+      if (imgIdx < 0 || !serverImageFiles[imgIdx]) return '';
+      const imgUrl = API + '/edu-uploads/rot_' + serverImageFiles[imgIdx].filename;
+      return '<div style="margin:10px 0"><img src="' + imgUrl + '" style="max-width:240px;max-height:200px;border-radius:8px;border:1px solid var(--border);cursor:pointer" onclick="openLb([\'' + imgUrl + '\'],0)"></div>';
+    })
     .replace(/\[此处有图[：:](.+?)\]/g,'<div class="img-note">📐 $1</div>')
     .replace(/\[图片描述[：:](.+?)\]/g,'<div class="img-note">🖼️ $1</div>')
     .replace(/\$\$(.+?)\$\$/gs,'<div style="background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);border-radius:8px;padding:8px 14px;margin:8px 0;font-family:var(--mono);color:var(--purple);text-align:center;white-space:normal">$1</div>')
@@ -290,7 +288,6 @@ function renderDoc(text) {
     .replace(/^---$/gm,'<hr style="border:none;border-top:1px solid var(--border);margin:20px 0">')
     .replace(/\n/g,'<br>');
 
-  svgs.forEach((s,i) => { html = html.replace('___SVG_'+i+'___', s); });
   return html;
 }
 
