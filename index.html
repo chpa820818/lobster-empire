@@ -159,6 +159,7 @@ section{max-width:1200px;margin:0 auto;padding:80px 24px}
 .dept-card .dept-desc{font-size:13.5px;color:var(--text-dim);line-height:1.7}
 .dept-enter{display:inline-flex;align-items:center;gap:6px;padding:8px 20px;border-radius:10px;background:linear-gradient(135deg,var(--gold),#b8922e);color:#0a0a14;font-size:13px;font-weight:700;text-decoration:none;transition:all .2s}
 .dept-enter:hover{filter:brightness(1.1);transform:translateY(-1px);color:#0a0a14}
+.dept-badge{display:inline-flex;align-items:center;gap:4px;padding:6px 14px;border-radius:8px;font-size:12px;font-weight:600;color:var(--text-muted);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06)}
 .dept-card .dept-units{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
 .dept-card .unit-tag{
   padding:4px 10px;border-radius:8px;font-size:11.5px;
@@ -282,7 +283,7 @@ footer .footer-links a:hover{color:var(--gold)}
     <a href="#dept-prop" class="dept-link"><span class="dl-icon">🎨</span><span class="dl-name">宣传部</span></a>
     <a href="#dept-eng" class="dept-link"><span class="dl-icon">⚙️</span><span class="dl-name">技术工程部</span></a>
     <a href="#dept-law" class="dept-link"><span class="dl-icon">📜</span><span class="dl-name">法务部</span></a>
-    <a href="archive.html" class="dept-link" target="_blank" style="background:rgba(212,168,67,.08);border-color:rgba(212,168,67,.2)"><span class="dl-icon">🗄️</span><span class="dl-name">📤 档案部（上传文件）</span></a>
+    <a href="archive.html" class="dept-link" style="background:rgba(212,168,67,.08);border-color:rgba(212,168,67,.2)"><span class="dl-icon">🗄️</span><span class="dl-name">档案部</span></a>
   </div>
 </div>
 
@@ -335,7 +336,7 @@ footer .footer-links a:hover{color:var(--gold)}
         </div>
       </div>
       <div class="dept-desc">负责帝国教育体系建设，提供 AI 辅助教学、模拟训练与试卷管理服务。</div>
-      <div style="margin-top:14px"><a href="https://20.17.98.72:3000" target="_blank" class="dept-enter">进入部门 →</a></div>
+      <div style="margin-top:14px"><span class="dept-badge">🔧 筹建中</span></div>
     </div>
 
     <div class="dept-card fade-in" id="dept-sec">
@@ -347,7 +348,7 @@ footer .footer-links a:hover{color:var(--gold)}
         </div>
       </div>
       <div class="dept-desc">维护帝国信息安全，包括命令审查、审计日志、完整性校验与安全巡检。</div>
-      <div style="margin-top:14px"><a href="https://20.17.98.72:3000" target="_blank" class="dept-enter">进入部门 →</a></div>
+      <div style="margin-top:14px"><span class="dept-badge">🔧 筹建中</span></div>
     </div>
 
     <div class="dept-card fade-in" id="dept-data">
@@ -359,7 +360,7 @@ footer .footer-links a:hover{color:var(--gold)}
         </div>
       </div>
       <div class="dept-desc">监控帝国基础设施运行状态，提供系统数据、版本信息与运行指标。</div>
-      <div style="margin-top:14px"><a href="https://20.17.98.72:3000" target="_blank" class="dept-enter">进入部门 →</a></div>
+      <div style="margin-top:14px"><span class="dept-badge">🔧 筹建中</span></div>
     </div>
 
     <div class="dept-card fade-in" id="dept-prop">
@@ -371,7 +372,7 @@ footer .footer-links a:hover{color:var(--gold)}
         </div>
       </div>
       <div class="dept-desc">负责帝国形象建设与内容创作，AI 图像生成、花园设计等创意工作。</div>
-      <div style="margin-top:14px"><a href="https://20.17.98.72:3000" target="_blank" class="dept-enter">进入部门 →</a></div>
+      <div style="margin-top:14px"><span class="dept-badge">🔧 筹建中</span></div>
     </div>
 
     <div class="dept-card fade-in" id="dept-eng">
@@ -383,7 +384,7 @@ footer .footer-links a:hover{color:var(--gold)}
         </div>
       </div>
       <div class="dept-desc">帝国技术基础设施维护，代码工程、自动化部署与系统运维。</div>
-      <div style="margin-top:14px"><a href="https://20.17.98.72:3000" target="_blank" class="dept-enter">进入部门 →</a></div>
+      <div style="margin-top:14px"><span class="dept-badge">🔧 筹建中</span></div>
     </div>
 
     <div class="dept-card fade-in" id="dept-law">
@@ -395,7 +396,7 @@ footer .footer-links a:hover{color:var(--gold)}
         </div>
       </div>
       <div class="dept-desc">制定与维护帝国法令法规，确保国策执行，处理合规事务。</div>
-      <div style="margin-top:14px"><a href="#policy" class="dept-enter">进入部门 →</a></div>
+      <div style="margin-top:14px"><span class="dept-badge">🔧 筹建中</span></div>
     </div>
 
     <div class="dept-card fade-in" id="dept-archive">
@@ -407,7 +408,7 @@ footer .footer-links a:hover{color:var(--gold)}
         </div>
       </div>
       <div class="dept-desc">帝国文件存档中心，支持批量上传、分类管理，为各部门提供资料支撑。</div>
-      <div style="margin-top:14px"><a href="archive.html" target="_blank" class="dept-enter">进入部门 →</a></div>
+      <div style="margin-top:14px"><a href="archive.html" class="dept-enter">进入部门 →</a></div>
     </div>
   </div>
 </section>
