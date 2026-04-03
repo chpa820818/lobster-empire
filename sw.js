@@ -1,7 +1,8 @@
-const CACHE_NAME = 'lobster-empire-v1';
+const CACHE_NAME = 'lobster-empire-v2';
 const ASSETS = [
   './',
   './index.html',
+  './archive.html',
   './manifest.json',
   './icons/icon-192.png',
   './icons/icon-512.png'
