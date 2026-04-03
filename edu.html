@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📋 教务处 — 龙虾帝国</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦞</text></svg>">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0a14;--card:#12121e;--border:#1a1a2e;--border-hover:#2a2a44;--text:#e8e8ee;--text-dim:#a0a0b4;--text-muted:#55556a;--gold:#d4a843;--gold-glow:rgba(212,168,67,.15);--accent:#e74c3c;--green:#27ae60;--blue:#4a90d9;--purple:#7c5cbf;--radius:14px;--font:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Noto Sans SC',sans-serif;--mono:'SF Mono','Fira Code',monospace}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;padding:20px}
+body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-gradient(ellipse 80% 50% at 50% 0%,rgba(212,168,67,.04),transparent),var(--bg)}
+.container{max-width:960px;margin:0 auto}
+header{text-align:center;padding:24px 0 20px}
+header h1{font-size:26px;font-weight:800;color:var(--gold);display:flex;align-items:center;justify-content:center;gap:10px}
+header p{color:var(--text-dim);font-size:13px;margin-top:6px}
+.back-link{display:inline-block;margin-bottom:12px;color:var(--text-dim);font-size:13px;text-decoration:none}
+.back-link:hover{color:var(--gold)}
+.upload-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:20px}
+.drop-zone{border:2px dashed var(--border);border-radius:var(--radius);padding:48px 20px;text-align:center;cursor:pointer;transition:all .2s;position:relative}
+.drop-zone:hover,.drop-zone.dragover{border-color:var(--gold);background:rgba(212,168,67,.04)}
+.drop-zone .icon{font-size:48px;margin-bottom:10px}
+.drop-zone p{color:var(--text-dim);font-size:14px}
+.drop-zone small{color:var(--text-muted);font-size:12px}
+.drop-zone input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.preview-img{max-width:200px;max-height:260px;border-radius:10px;border:1px solid var(--border);object-fit:contain;cursor:zoom-in}
+.btn{padding:10px 24px;border-radius:10px;border:none;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--font);transition:all .2s;display:inline-flex;align-items:center;gap:6px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-primary{background:linear-gradient(135deg,var(--gold),#b8922e);color:#0a0a14}
+.btn-primary:hover:not(:disabled){filter:brightness(1.1);transform:translateY(-1px)}
+.btn-secondary{background:rgba(255,255,255,.05);color:var(--text-dim);border:1px solid var(--border)}
+.btn-secondary:hover{border-color:var(--border-hover);color:var(--text)}
+.result-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:20px;display:none}
+.result-card.visible{display:block}
+.result-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px}
+.result-header h2{font-size:18px;font-weight:700;color:var(--gold)}
+.doc-content{font-size:15px;line-height:2;color:var(--text);white-space:pre-wrap;word-wrap:break-word}
+.doc-content h1,.doc-content h2,.doc-content h3{color:var(--gold);margin:20px 0 10px;line-height:1.4;white-space:normal}
+.doc-content h1{font-size:22px;border-bottom:2px solid rgba(212,168,67,.2);padding-bottom:8px}
+.doc-content h2{font-size:18px}
+.doc-content h3{font-size:16px}
+.doc-content strong{color:var(--text)}
+.doc-content code{background:rgba(255,255,255,.06);padding:2px 6px;border-radius:4px;font-family:var(--mono);font-size:13px}
+.doc-content table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px}
+.doc-content th{background:rgba(212,168,67,.1);color:var(--gold);padding:10px 12px;text-align:left;border-bottom:2px solid rgba(212,168,67,.2)}
+.doc-content td{padding:8px 12px;border-bottom:1px solid var(--border)}
+.doc-content .geo-desc{background:rgba(74,144,217,.08);border:1px solid rgba(74,144,217,.2);border-radius:10px;padding:12px 16px;margin:10px 0;font-size:13px;color:var(--blue);white-space:normal}
+.doc-content .geo-desc::before{content:'📐 '}
+.doc-content .formula{background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);border-radius:8px;padding:8px 14px;margin:8px 0;font-family:var(--mono);font-size:14px;color:var(--purple);text-align:center;white-space:normal}
+.loading{display:flex;align-items:center;gap:10px;padding:20px;color:var(--text-dim)}
+.spinner{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.progress-steps{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.step{padding:4px 12px;border-radius:8px;font-size:11px;border:1px solid var(--border);color:var(--text-muted)}
+.step.active{border-color:var(--gold);color:var(--gold);background:var(--gold-glow)}
+.step.done{border-color:var(--green);color:var(--green);background:rgba(39,174,96,.08)}
+.server-status{text-align:center;padding:8px;font-size:12px;border-radius:8px;margin-bottom:16px}
+.server-status.ok{background:rgba(39,174,96,.1);color:var(--green);border:1px solid rgba(39,174,96,.2)}
+.server-status.err{background:rgba(231,76,60,.1);color:var(--accent);border:1px solid rgba(231,76,60,.2)}
+@media print{
+  body{background:#fff;color:#000;padding:0}
+  body::before{display:none}
+  .upload-card,.back-link,header,.result-header .result-actions,.server-status{display:none!important}
+  .result-card{background:#fff;border:none;padding:0;display:block!important}
+  .result-header h2{color:#000}
+  .doc-content{color:#000;font-size:14px;line-height:1.8}
+  .doc-content h1,.doc-content h2,.doc-content h3{color:#333}
+  .doc-content .geo-desc{border-color:#999;color:#333;background:#f8f8f8}
+  .doc-content .formula{border-color:#999;color:#333;background:#f8f8f8}
+}
+@media(max-width:600px){body{padding:12px}.upload-card,.result-card{padding:16px}.preview-img{max-width:100%}}
+</style>
+</head>
+<body>
+<div class="container">
+  <a href="index.html" class="back-link">← 返回龙虾帝国</a>
+  <header><h1>📋 教务处</h1><p>上传图片 → AI 智能识别 → 还原为可编辑文档</p></header>
+  <div id="serverStatus" class="server-status ok">🟢 连接中...</div>
+
+  <div class="upload-card">
+    <div class="drop-zone" id="dropZone">
+      <div class="icon">📷</div>
+      <p>拖拽图片到此处，或点击选择</p>
+      <small>支持 JPG / PNG / WebP · 试卷、教材、笔记均可 · 最多 10 张</small>
+      <input type="file" id="fileInput" accept="image/*" multiple>
+    </div>
+    <div id="previewArea" style="display:none">
+      <div style="display:flex;gap:12px;margin-top:16px;flex-wrap:wrap" id="previews"></div>
+      <div style="display:flex;gap:10px;margin-top:16px;align-items:center;flex-wrap:wrap">
+        <button class="btn btn-primary" id="analyzeBtn" onclick="startAnalyze()">🔍 开始识别</button>
+        <button class="btn btn-secondary" onclick="clearAll()">清空</button>
+        <span style="font-size:12px;color:var(--text-muted)" id="statusText"></span>
+      </div>
+    </div>
+    <div id="loadingArea" style="display:none">
+      <div class="loading"><div class="spinner"></div><span id="loadingText">正在识别中...</span></div>
+      <div class="progress-steps" id="steps">
+        <span class="step active" id="step1">1. 上传图片</span>
+        <span class="step" id="step2">2. AI 识别</span>
+        <span class="step" id="step3">3. 生成文档</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="result-card" id="resultCard">
+    <div class="result-header">
+      <h2>📄 识别结果</h2>
+      <div class="result-actions" style="display:flex;gap:8px">
+        <button class="btn btn-secondary" onclick="window.print()" style="padding:6px 14px;font-size:12px">🖨️ 打印</button>
+        <button class="btn btn-secondary" onclick="copyText()" style="padding:6px 14px;font-size:12px">📋 复制</button>
+        <button class="btn btn-secondary" onclick="downloadDoc()" style="padding:6px 14px;font-size:12px">💾 下载</button>
+      </div>
+    </div>
+    <div class="doc-content" id="docContent"></div>
+  </div>
+</div>
+
+<script>
+const API = 'https://lobster-empire.cloud-ip.cc:3000';
+let uploadedImages = [];
+let rawResult = '';
+
+// Server check
+(async () => {
+  const el = document.getElementById('serverStatus');
+  try {
+    const r = await fetch(API + '/api/edu/upload', { method: 'OPTIONS' });
+    el.className = 'server-status ok'; el.textContent = '🟢 服务器已连接';
+    setTimeout(() => el.style.display = 'none', 2000);
+  } catch {
+    el.className = 'server-status err';
+    el.innerHTML = '🔴 无法连接服务器 — 请先访问 <a href="'+API+'" target="_blank" style="color:var(--accent)">'+API+'</a> 接受证书';
+  }
+})();
+
+const dropZone = document.getElementById('dropZone');
+const fileInput = document.getElementById('fileInput');
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+dropZone.addEventListener('drop', e => { e.preventDefault(); dropZone.classList.remove('dragover'); handleFiles(e.dataTransfer.files); });
+fileInput.addEventListener('change', () => { handleFiles(fileInput.files); fileInput.value = ''; });
+
+function handleFiles(files) {
+  for (const f of files) {
+    if (!f.type.startsWith('image/') || uploadedImages.length >= 10) continue;
+    const reader = new FileReader();
+    reader.onload = () => { uploadedImages.push({ file: f, dataUrl: reader.result }); renderPreviews(); };
+    reader.readAsDataURL(f);
+  }
+}
+function renderPreviews() {
+  const area = document.getElementById('previewArea');
+  const el = document.getElementById('previews');
+  if (!uploadedImages.length) { area.style.display = 'none'; return; }
+  area.style.display = 'block';
+  el.innerHTML = uploadedImages.map((img, i) => `
+    <div style="position:relative;display:inline-block">
+      <img class="preview-img" src="${img.dataUrl}" onclick="window.open(this.src)">
+      <button onclick="removeImg(${i})" style="position:absolute;top:4px;right:4px;width:24px;height:24px;border-radius:50%;background:rgba(0,0,0,.7);color:#fff;border:none;cursor:pointer;font-size:13px">✕</button>
+    </div>`).join('');
+  document.getElementById('statusText').textContent = uploadedImages.length + ' 张图片就绪';
+}
+function removeImg(i) { uploadedImages.splice(i, 1); renderPreviews(); }
+function clearAll() { uploadedImages = []; renderPreviews(); document.getElementById('resultCard').classList.remove('visible'); }
+
+async function startAnalyze() {
+  if (!uploadedImages.length) return alert('请先上传图片');
+  const btn = document.getElementById('analyzeBtn');
+  const loading = document.getElementById('loadingArea');
+  btn.disabled = true; loading.style.display = 'block';
+  document.getElementById('resultCard').classList.remove('visible');
+  setStep(1); document.getElementById('loadingText').textContent = '上传图片...';
+  try {
+    const fd = new FormData();
+    uploadedImages.forEach(img => fd.append('images', img.file));
+    const upResp = await fetch(API + '/api/edu/upload', { method: 'POST', body: fd });
+    const upData = await upResp.json();
+    if (!upData.success) throw new Error(upData.error || '上传失败');
+    setStep(2); document.getElementById('loadingText').textContent = 'AI 正在识别...（约 30-60 秒）';
+    const aResp = await fetch(API + '/api/edu/analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ images: upData.files }) });
+    const aData = await aResp.json();
+    if (aData.error) throw new Error(aData.error);
+    setStep(3);
+    rawResult = aData.content;
+    document.getElementById('docContent').innerHTML = renderDoc(aData.content);
+    document.getElementById('resultCard').classList.add('visible');
+  } catch (err) { alert('识别失败: ' + err.message); }
+  btn.disabled = false; loading.style.display = 'none';
+}
+function setStep(n) { for (let i=1;i<=3;i++) document.getElementById('step'+i).className='step'+(i<n?' done':i===n?' active':''); }
+function renderDoc(text) {
+  return text
+    .replace(/^### (.+)$/gm,'<h3>$1</h3>')
+    .replace(/^## (.+)$/gm,'<h2>$1</h2>')
+    .replace(/^# (.+)$/gm,'<h1>$1</h1>')
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\[GEO:\s*(.+?)\]/g,'<div class="geo-desc">$1</div>')
+    .replace(/\$\$(.+?)\$\$/gs,'<div class="formula">$1</div>')
+    .replace(/\$(.+?)\$/g,'<code>$1</code>')
+    .replace(/(\|.+\|\n\|[-| :]+\|\n(?:\|.+\|\n?)+)/g, m => {
+      const lines=m.trim().split('\n').filter(l=>l.trim());
+      if(lines.length<3)return m;
+      const p=l=>l.split('|').map(c=>c.trim()).filter(c=>c!=='');
+      const h=p(lines[0]),r=lines.slice(2).map(p);
+      return '<table><thead><tr>'+h.map(c=>'<th>'+c+'</th>').join('')+'</tr></thead><tbody>'+r.map(cs=>'<tr>'+cs.map(c=>'<td>'+c+'</td>').join('')+'</tr>').join('')+'</tbody></table>';
+    })
+    .replace(/\n/g,'<br>');
+}
+function copyText() { navigator.clipboard.writeText(rawResult).then(()=>alert('已复制')); }
+function downloadDoc() {
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([rawResult],{type:'text/plain;charset=utf-8'}));
+  a.download='教务处识别_'+new Date().toISOString().slice(0,10)+'.md'; a.click();
+}
+</script>
+</body>
+</html>
