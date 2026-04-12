@@ -133,6 +133,7 @@ if(sessionStorage.getItem('sg_auth')==='1')document.addEventListener('DOMContent
 <div style="margin-bottom:30px">
 <button onclick="loadGame()" id="load-btn" style="display:none">📜 继续征程</button>
 </div>
+<div style="margin-top:15px;display:flex;gap:8px;justify-content:center"><button onclick="exportSave()" style="font-size:.8em;padding:4px 10px;background:var(--panel);border:1px solid var(--border);color:var(--gold);border-radius:4px;cursor:pointer">📤 导出存档</button><button onclick="importSave()" style="font-size:.8em;padding:4px 10px;background:var(--panel);border:1px solid var(--border);color:var(--gold);border-radius:4px;cursor:pointer">📥 导入存档</button></div>
 <h2 style="color:var(--gold);margin-bottom:20px">选择你的势力</h2>
 <div class="faction-grid" id="faction-grid"></div>
 </div>
@@ -255,6 +256,8 @@ showGameScreen();
 }
 
 function saveGame(){try{localStorage.setItem("sanguo_save",JSON.stringify(G));addLog("💾 游戏已保存","good")}catch(e){addLog("保存失败: "+e.message,"battle")}}
+function exportSave(){const s=localStorage.getItem("sanguo_save");if(!s){alert("没有找到存档");return;}const data={game:"三国·天下争锋",version:"1.0",exportDate:new Date().toISOString(),save:JSON.parse(s)};const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);const d=new Date().toISOString().slice(0,10);a.download=`三国存档_${d}.json`;a.click();URL.revokeObjectURL(a.href);}
+function importSave(){const inp=document.createElement("input");inp.type="file";inp.accept=".json";inp.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const data=JSON.parse(ev.target.result);const save=data.save||data;if(!save.turn&&save.turn!==0){alert("无效的存档文件");return;}if(!confirm("导入存档将覆盖当前存档，确定吗？"))return;localStorage.setItem("sanguo_save",JSON.stringify(save));location.reload();}catch(ex){alert("存档文件解析失败: "+ex.message);}};r.readAsText(f);};inp.click();}
 function loadGame(){try{let s=localStorage.getItem("sanguo_save");if(s){G=JSON.parse(s);showGameScreen();return true}}catch(e){}return false}
 function hasSave(){return !!localStorage.getItem("sanguo_save")}
 
@@ -303,7 +306,7 @@ sb.innerHTML=`
 ${p.generals.map(g=>`<div class="general-item"><span class="name">${g.name}</span><div class="gstats">武${g.atk} 防${g.def} 智${g.int} 速${g.spd}</div></div>`).join('')}
 <h3>📖 谋士</h3>
 ${p.advisors.map(a=>`<div class="general-item"><span class="name">${a.name}</span><div class="gstats">智${a.int} 政${a.pol} 魅${a.cha}</div></div>`).join('')}
-<div class="save-btns"><button onclick="saveGame()">💾 存档</button><button onclick="if(confirm('确定退出？'))showTitleScreen()">🚪 退出</button></div>`;
+<div class="save-btns"><button onclick="saveGame()">💾 存档</button><button onclick="exportSave()">📤 导出</button><button onclick="importSave()">📥 导入</button><button onclick="if(confirm('确定退出？'))showTitleScreen()">🚪 退出</button></div>`;
 // top bar
 document.getElementById('turn-info').textContent=`${G.year}年 ${SEASONS[G.season]}  第${G.turn+1}回合`;
 document.getElementById('actions-left').textContent=`剩余行动: ${G.actionsLeft}/2`;

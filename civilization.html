@@ -192,6 +192,7 @@ if(sessionStorage.getItem('civ_auth')==='1')document.addEventListener('DOMConten
 <button class="btn btn-gold" id="startBtn" disabled>开启文明 ⚡</button>
 <button id="loadBtn" onclick="loadGame()">读取存档</button>
 </div>
+<div style="margin-top:12px;display:flex;gap:8px;justify-content:center"><button onclick="exportSave()" style="font-size:.8em;padding:3px 8px;background:var(--panel);border:1px solid var(--border);color:var(--gold);border-radius:4px;cursor:pointer">📤 导出存档</button><button onclick="importSave()" style="font-size:.8em;padding:3px 8px;background:var(--panel);border:1px solid var(--border);color:var(--gold);border-radius:4px;cursor:pointer">📥 导入存档</button></div>
 </div>
 </div>
 
@@ -216,6 +217,8 @@ if(sessionStorage.getItem('civ_auth')==='1')document.addEventListener('DOMConten
 <button onclick="setSpeed(10)" id="sp10">⏩⏩</button>
 </div>
 <button class="btn" style="margin-left:8px;font-size:0.8em;background:var(--border);padding:4px 10px;border-radius:4px" onclick="saveGame()">💾</button>
+<button class="btn" style="margin-left:4px;font-size:0.8em;background:var(--border);padding:4px 10px;border-radius:4px" onclick="exportSave()" title="导出存档">📤</button>
+<button class="btn" style="margin-left:4px;font-size:0.8em;background:var(--border);padding:4px 10px;border-radius:4px" onclick="importSave()" title="导入存档">📥</button>
 </div>
 
 <div id="sidebar">
@@ -1801,6 +1804,8 @@ localStorage.setItem('civ_save',JSON.stringify(G));
 document.getElementById('statusMsg').textContent='✅ 存档成功!';
 setTimeout(()=>{document.getElementById('statusMsg').textContent='游戏运行中';},2000);
 }
+function exportSave(){const s=localStorage.getItem('civ_save');if(!s){alert('没有找到存档');return;}const data={game:'文明纪元',version:'1.0',exportDate:new Date().toISOString(),save:JSON.parse(s)};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);const d=new Date().toISOString().slice(0,10);a.download=`文明纪元存档_${d}.json`;a.click();URL.revokeObjectURL(a.href);}
+function importSave(){const inp=document.createElement('input');inp.type='file';inp.accept='.json';inp.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const data=JSON.parse(ev.target.result);const save=data.save||data;if(!save.year&&save.year!==0){alert('无效的存档文件');return;}if(!confirm('导入存档将覆盖当前存档，确定吗？'))return;localStorage.setItem('civ_save',JSON.stringify(save));location.reload();}catch(ex){alert('存档文件解析失败: '+ex.message);}};r.readAsText(f);};inp.click();}
 
 function loadGame(){
 const s=localStorage.getItem('civ_save');
